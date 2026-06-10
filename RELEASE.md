@@ -53,6 +53,8 @@ Compress-Archive -Path manifest.json, content.js, styles.css, LICENSE, README.md
 - 短い説明
 - 詳細説明
 - スクリーンショット
+- サムネイル画像: `assets/store/note-markdown-copy-thumbnail.jpg`
+- アイキャッチ画像: `assets/store/note-markdown-copy-eyecatch.jpg`
 - プライバシー説明
 - サポートURLまたはGitHubリポジトリURL
 
