@@ -174,19 +174,22 @@
       throw new Error("Article title was not found.");
     }
 
-    const parts = [
-      `# ${metadata.title}`,
-      "",
-      `- URL: ${location.href}`,
-      metadata.author ? `- Author: ${metadata.author}` : "",
-      metadata.published ? `- Published: ${metadata.published}` : "",
-      "",
-      metadata.thumbnailUrl ? `![見出し画像](${metadata.thumbnailUrl})` : "",
-      metadata.thumbnailUrl ? "" : "",
-      body
-    ];
+    return normalizeMarkdown([frontMatter(metadata), body].filter(Boolean).join("\n\n"));
+  }
 
-    return normalizeMarkdown(parts.filter((part) => part !== "").join("\n"));
+  function frontMatter(metadata) {
+    return [
+      "---",
+      `title: ${yamlString(metadata.title)}`,
+      `URL: ${yamlString(location.href)}`,
+      `PublishedDate: ${yamlString(metadata.published)}`,
+      `thumbnailImage: ${yamlString(metadata.thumbnailUrl)}`,
+      "---"
+    ].join("\n");
+  }
+
+  function yamlString(value) {
+    return `"${String(value || "").replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}"`;
   }
 
   function findArticleContainer() {
