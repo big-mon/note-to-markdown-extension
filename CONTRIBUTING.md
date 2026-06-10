@@ -1,6 +1,6 @@
 # Contributing
 
-note Markdown Copierへのコントリビューションを歓迎します。
+note記事Markdownコピーへのコントリビューションを歓迎します。
 
 ## 歓迎する貢献
 

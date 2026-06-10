@@ -1,6 +1,6 @@
 # Privacy Policy
 
-note Markdown Copierは、閲覧中のnote記事をブラウザ内でMarkdownに変換し、クリップボードへコピーするChrome拡張です。
+note記事Markdownコピーは、閲覧中のnote記事をブラウザ内でMarkdownに変換し、クリップボードへコピーするChrome拡張です。
 
 ## 収集する情報
 

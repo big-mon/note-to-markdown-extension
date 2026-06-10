@@ -1,4 +1,4 @@
-# note Markdown Copier
+# note記事Markdownコピー
 
 noteの記事ページに「Markdownコピー」ボタンを追加するChrome拡張です。表示中の記事タイトル、メタ情報、見出し画像、記事本文をMarkdownとしてクリップボードへコピーします。
 
