@@ -95,17 +95,49 @@
       return;
     }
 
-    if (existing) {
-      return;
-    }
+    const button = existing || createButton();
+    const target = findButtonPlacementTarget();
 
+    if (target && button.parentElement !== target) {
+      target.appendChild(button);
+    } else if (!target && !button.isConnected) {
+      document.documentElement.appendChild(button);
+    }
+  }
+
+  function createButton() {
     const button = document.createElement("button");
     button.id = BUTTON_ID;
     button.type = "button";
     button.textContent = "Markdownコピー";
     button.setAttribute("aria-label", "この記事をMarkdownとしてコピー");
     button.addEventListener("click", onCopyClick);
-    document.documentElement.appendChild(button);
+    return button;
+  }
+
+  function findButtonPlacementTarget() {
+    const article = findArticleContainer();
+    const title = article.querySelector("h1") || document.querySelector("h1");
+    const titleContainer = title?.closest("[class*=\"titleContainer\"], [class*=\"TitleContainer\"]") || title?.parentElement;
+    const titleAttachment =
+      titleContainer?.querySelector("[class*=\"titleAttachment\"], [class*=\"TitleAttachment\"]") ||
+      titleContainer?.querySelector("button[aria-label=\"スキ\"]")?.closest("div, span")?.parentElement;
+
+    if (titleAttachment) {
+      return titleAttachment.querySelector(".flex") || titleAttachment;
+    }
+
+    if (titleContainer) {
+      let fallback = titleContainer.querySelector(".note-md-copy-inline-actions");
+      if (!fallback) {
+        fallback = document.createElement("div");
+        fallback.className = "note-md-copy-inline-actions";
+        title.insertAdjacentElement("afterend", fallback);
+      }
+      return fallback;
+    }
+
+    return null;
   }
 
   async function onCopyClick(event) {
