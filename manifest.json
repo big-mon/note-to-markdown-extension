@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "note Markdown Copier",
-  "description": "Adds a button to note article pages for copying the visible article as Markdown.",
+  "description": "noteの記事ページに、表示中の記事をMarkdownとしてコピーするボタンを追加します。",
   "version": "0.1.0",
   "permissions": [
     "clipboardWrite"
