@@ -118,13 +118,18 @@
   function findButtonPlacementTarget() {
     const article = findArticleContainer();
     const title = article.querySelector("h1") || document.querySelector("h1");
-    const titleContainer = title?.closest("[class*=\"titleContainer\"], [class*=\"TitleContainer\"]") || title?.parentElement;
-    const titleAttachment =
-      titleContainer?.querySelector("[class*=\"titleAttachment\"], [class*=\"TitleAttachment\"]") ||
-      titleContainer?.querySelector("button[aria-label=\"スキ\"]")?.closest("div, span")?.parentElement;
+    if (!title) {
+      return null;
+    }
 
-    if (titleAttachment) {
-      return titleAttachment.querySelector(".flex") || titleAttachment;
+    const titleContainer =
+      title.closest("[class*=\"titleContainer\"], [class*=\"TitleContainer\"]") || title.parentElement;
+    const actionRow = title.nextElementSibling;
+    const likeGroup =
+      actionRow?.querySelector("svg[aria-label=\"スキ\"]") && actionRow.querySelector(":scope > .flex");
+
+    if (likeGroup) {
+      return likeGroup;
     }
 
     if (titleContainer) {
