@@ -99,7 +99,11 @@
     const target = findButtonPlacementTarget();
 
     if (target && button.parentElement !== target) {
+      const previousParent = button.parentElement;
       target.appendChild(button);
+      if (previousParent?.classList.contains("note-md-copy-inline-actions") && !previousParent.childElementCount) {
+        previousParent.remove();
+      }
     } else if (!target && !button.isConnected) {
       document.documentElement.appendChild(button);
     }
@@ -118,13 +122,31 @@
   function findButtonPlacementTarget() {
     const article = findArticleContainer();
     const title = article.querySelector("h1") || document.querySelector("h1");
-    const titleContainer = title?.closest("[class*=\"titleContainer\"], [class*=\"TitleContainer\"]") || title?.parentElement;
-    const titleAttachment =
-      titleContainer?.querySelector("[class*=\"titleAttachment\"], [class*=\"TitleAttachment\"]") ||
-      titleContainer?.querySelector("button[aria-label=\"スキ\"]")?.closest("div, span")?.parentElement;
+    if (!title) {
+      return null;
+    }
+
+    const titleContainer =
+      title.closest("[class*=\"titleContainer\"], [class*=\"TitleContainer\"]") || title.parentElement;
+    const titleAttachment = titleContainer?.querySelector(
+      "[class*=\"titleAttachment\"], [class*=\"TitleAttachment\"]"
+    );
 
     if (titleAttachment) {
       return titleAttachment.querySelector(".flex") || titleAttachment;
+    }
+
+    const actionRow = findTitleActionRow(title, titleContainer);
+    if (actionRow) {
+      return findLikeActionGroup(actionRow) || actionRow;
+    }
+
+    const legacyLikeGroup = titleContainer
+      ?.querySelector("button[aria-label=\"スキ\"]")
+      ?.closest("div, span")
+      ?.parentElement;
+    if (legacyLikeGroup) {
+      return legacyLikeGroup.querySelector(".flex") || legacyLikeGroup;
     }
 
     if (titleContainer) {
@@ -132,12 +154,46 @@
       if (!fallback) {
         fallback = document.createElement("div");
         fallback.className = "note-md-copy-inline-actions";
-        title.insertAdjacentElement("afterend", fallback);
+        const anchor = findTitleActionRow(title, titleContainer) || title;
+        anchor.insertAdjacentElement("afterend", fallback);
       }
       return fallback;
     }
 
     return null;
+  }
+
+  function findTitleActionRow(title, titleContainer) {
+    const sibling = title.nextElementSibling;
+    if (sibling?.querySelector?.("svg[aria-label=\"スキ\"], button[aria-label=\"スキ\"]")) {
+      return sibling;
+    }
+
+    const likeMarker = titleContainer?.querySelector("svg[aria-label=\"スキ\"], button[aria-label=\"スキ\"]");
+    if (!likeMarker) {
+      return null;
+    }
+
+    let node = likeMarker.closest("div");
+    while (node?.parentElement && node.parentElement !== titleContainer) {
+      node = node.parentElement;
+    }
+
+    return node?.parentElement === titleContainer ? node : null;
+  }
+
+  function findLikeActionGroup(actionRow) {
+    const likeMarker = actionRow.querySelector("svg[aria-label=\"スキ\"], button[aria-label=\"スキ\"]");
+    if (!likeMarker) {
+      return actionRow.firstElementChild || actionRow;
+    }
+
+    let node = likeMarker.closest("div");
+    while (node && node.parentElement !== actionRow) {
+      node = node.parentElement;
+    }
+
+    return node || actionRow;
   }
 
   async function onCopyClick(event) {
